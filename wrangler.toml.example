@@ -1,0 +1,14 @@
+# Cloudflare Pages configuration template
+# Copy to wrangler.toml and fill in your values
+# NEVER commit wrangler.toml - it's in .gitignore
+
+name = "sitejson-web-ssr"
+compatibility_date = "2026-02-08"
+compatibility_flags = ["nodejs_compat"]
+pages_build_output_dir = ".vercel/output/static"
+
+# Account ID should be set via environment variable CLOUDFLARE_ACCOUNT_ID
+# Do NOT hardcode account_id here
+
+[vars]
+PUBLIC_SITE_BASE_URL = "https://sitejson.com"
