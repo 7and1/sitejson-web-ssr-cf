@@ -52,6 +52,10 @@ type BackendSiteResponse = {
         externalLinks?: number;
         imagesCount?: number;
       };
+      files?: {
+        hasRobots?: boolean;
+        hasSitemap?: boolean;
+      };
       dns?: {
         provider?: string;
         mxRecords?: string[];
@@ -269,8 +273,8 @@ const toSiteData = (domain: string, payload: BackendSiteResponse): SiteData => {
       images_count: report?.seo?.imagesCount ?? 0,
     },
     files: {
-      has_sitemap: false,
-      has_robots: false,
+      has_sitemap: report?.files?.hasSitemap ?? false,
+      has_robots: report?.files?.hasRobots ?? false,
     },
     dns: {
       provider: report?.dns?.provider ?? 'Unknown',

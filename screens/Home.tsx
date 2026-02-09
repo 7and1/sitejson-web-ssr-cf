@@ -130,9 +130,9 @@ const Home: React.FC = () => {
                     <Link href="/directory/topic/education" className="text-sm text-slate-600 hover:text-blue-600 hover:underline">Education Platforms</Link>
                 </div>
                 <div className="flex flex-col gap-3">
-                    <Link href="/site/google.com" className="text-sm text-slate-600 hover:text-blue-600 hover:underline">Analyze google.com</Link>
-                    <Link href="/site/amazon.com" className="text-sm text-slate-600 hover:text-blue-600 hover:underline">Analyze amazon.com</Link>
-                    <Link href="/site/notion.so" className="text-sm text-slate-600 hover:text-blue-600 hover:underline">Analyze notion.so</Link>
+                    <Link href="/data/google.com" className="text-sm text-slate-600 hover:text-blue-600 hover:underline">Analyze google.com</Link>
+                    <Link href="/data/amazon.com" className="text-sm text-slate-600 hover:text-blue-600 hover:underline">Analyze amazon.com</Link>
+                    <Link href="/data/notion.so" className="text-sm text-slate-600 hover:text-blue-600 hover:underline">Analyze notion.so</Link>
                 </div>
             </div>
         </div>

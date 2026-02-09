@@ -63,6 +63,8 @@ const SiteReport: React.FC<SiteReportProps> = ({ domain }) => {
                 <ChevronRight size={12} />
                 <Link href="/directory/category/technology" className="hover:text-slate-900">Directory</Link>
                 <ChevronRight size={12} />
+                <Link href={`/data/${data.domain}`} className="hover:text-slate-900">Data</Link>
+                <ChevronRight size={12} />
                 <span className="text-slate-900 font-medium">{data.domain}</span>
             </div>
 

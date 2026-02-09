@@ -43,7 +43,7 @@ export const HeroSection: React.FC = () => {
       return;
     }
 
-    router.push(`/site/${cleanDomain}`);
+    router.push(`/data/${cleanDomain}`);
   };
 
   // Pass either the user's typed input OR the cycling demo domain
@@ -67,7 +67,7 @@ export const HeroSection: React.FC = () => {
             </div>
             
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-slate-900 leading-[1.1]">
-              Turn any URL into <br />
+              Website intelligence, <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-violet-600">
                 structured data.
               </span>

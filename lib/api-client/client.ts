@@ -1,26 +1,52 @@
-import type { DirectoryResponse, SiteReportResponse } from './types';
+import type { SiteReportResponse, DirectoryResponse, SiteReport } from './types';
 
-const baseUrl = process.env.SITEJSON_API_BASE_URL ?? 'http://127.0.0.1:8787';
+const getBaseUrl = () =>
+  process.env.SITEJSON_API_BASE_URL ??
+  process.env.NEXT_PUBLIC_SITEJSON_API_BASE_URL ??
+  'http://127.0.0.1:8787';
 
-const fetchJson = async <T>(path: string): Promise<T> => {
-  const response = await fetch(`${baseUrl}${path}`, {
-    headers: {
-      'x-api-key': process.env.SITEJSON_API_KEY ?? 'dev-api-key',
-    },
-    cache: 'no-store',
-  });
+const getApiKey = () => process.env.SITEJSON_API_KEY ?? '';
 
-  if (!response.ok) {
-    throw new Error(`Request failed: ${response.status}`);
+const fetchApi = async <T>(path: string): Promise<T | null> => {
+  const apiKey = getApiKey();
+  const headers: Record<string, string> = { accept: 'application/json' };
+  if (apiKey) headers['x-api-key'] = apiKey;
+
+  try {
+    const res = await fetch(`${getBaseUrl()}${path}`, {
+      headers,
+      cache: 'no-store',
+    });
+    if (!res.ok) return null;
+    return (await res.json()) as T;
+  } catch {
+    return null;
   }
-
-  return response.json() as Promise<T>;
 };
 
-export const getSiteReport = (domain: string) => {
-  return fetchJson<SiteReportResponse>(`/api/v1/sites/${domain}`);
+export const getSiteReport = async (
+  domain: string,
+): Promise<{ report: SiteReport; isStale: boolean; updatedAt: string } | null> => {
+  const res = await fetchApi<SiteReportResponse>(
+    `/api/v1/sites/${encodeURIComponent(domain)}`,
+  );
+  if (!res?.ok || !res.data) return null;
+  return {
+    report: res.data.report,
+    isStale: res.data.freshness.is_stale,
+    updatedAt: res.data.freshness.updated_at,
+  };
 };
 
-export const getDirectory = (type: string, slug: string) => {
-  return fetchJson<DirectoryResponse>(`/api/v1/directory/${type}/${slug}`);
+export const getDirectory = async (
+  type: string,
+  slug: string,
+  page = 1,
+  pageSize = 24,
+): Promise<DirectoryResponse['data'] | null> => {
+  const res = await fetchApi<DirectoryResponse>(
+    `/api/v1/directory/${encodeURIComponent(type)}/${encodeURIComponent(slug)}?page=${page}&page_size=${pageSize}`,
+  );
+  if (!res?.ok || !res.data) return null;
+  return res.data;
 };

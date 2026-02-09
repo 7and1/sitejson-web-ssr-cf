@@ -11,7 +11,7 @@ interface SiteCardProps {
 
 export const SiteCard: React.FC<SiteCardProps> = ({ site }) => {
   return (
-    <Link href={`/site/${site.domain}`} className="group block h-full">
+    <Link href={`/data/${site.domain}`} className="group block h-full">
       <Card className="h-full overflow-hidden transition-all duration-300 hover:shadow-md hover:border-slate-300 group-hover:-translate-y-1">
         {/* Header / Thumbnail Area */}
         <div className="relative h-32 bg-slate-100 border-b border-slate-100 overflow-hidden">
