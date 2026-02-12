@@ -105,12 +105,16 @@ export const HeroSection: React.FC = () => {
             </div>
 
             <div className="flex items-center gap-4 pt-4">
-              <Button size="lg" className="font-semibold px-8 h-12 bg-slate-900 text-white hover:bg-slate-800">
-                Get API Key
-              </Button>
-              <Button variant="outline" className="font-semibold px-8 h-12 border-slate-300 text-slate-600 hover:border-slate-800 hover:text-slate-900">
-                View Documentation
-              </Button>
+              <a href="https://api.sitejson.com/api/docs" target="_blank" rel="noreferrer">
+                <Button size="lg" className="font-semibold px-8 h-12 bg-slate-900 text-white hover:bg-slate-800">
+                  Get API Key
+                </Button>
+              </a>
+              <a href="https://api.sitejson.com/api/docs" target="_blank" rel="noreferrer">
+                <Button variant="outline" className="font-semibold px-8 h-12 border-slate-300 text-slate-600 hover:border-slate-800 hover:text-slate-900">
+                  View Documentation
+                </Button>
+              </a>
             </div>
           </motion.div>
 

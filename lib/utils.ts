@@ -21,6 +21,20 @@ export function formatDuration(seconds: number): string {
   return `${m}m ${s}s`;
 }
 
+export function formatDurationHMS(seconds: number): string {
+  const h = Math.floor(seconds / 3600);
+  const m = Math.floor((seconds % 3600) / 60);
+  const s = Math.round(seconds % 60);
+  return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+}
+
+export function formatBigNumber(num: number): string {
+  if (num >= 1_000_000_000) return (num / 1_000_000_000).toFixed(2) + 'B';
+  if (num >= 1_000_000) return (num / 1_000_000).toFixed(2) + 'M';
+  if (num >= 1_000) return (num / 1_000).toFixed(2) + 'K';
+  return num.toString();
+}
+
 export function getRankBadgeColor(rank: number) {
   if (rank <= 100) return "bg-yellow-100 text-yellow-800 border-yellow-200";
   if (rank <= 1000) return "bg-slate-100 text-slate-800 border-slate-200";

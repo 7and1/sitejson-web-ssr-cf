@@ -73,6 +73,14 @@ export interface SiteReport {
     topCountry?: string;
     topRegions?: Array<{ country: string; share: number }>;
     topKeywords?: Array<{ keyword: string; volume: number; cpc: number }>;
+    trafficSources?: {
+      direct: number;
+      search: number;
+      social: number;
+      referral: number;
+      mail: number;
+      paid: number;
+    };
     domainAgeYears?: number | null;
   };
 
@@ -150,6 +158,23 @@ export interface SiteReportResponse {
       updated_at: string;
     };
     report: SiteReport;
+  };
+  error?: BackendErrorPayload;
+}
+
+export interface AlternativeSite {
+  domain: string;
+  title?: string;
+  rank?: number;
+  score?: number;
+  reasons?: string[];
+}
+
+export interface AlternativesResponse {
+  ok: boolean;
+  data?: {
+    algorithm: string;
+    items: AlternativeSite[];
   };
   error?: BackendErrorPayload;
 }

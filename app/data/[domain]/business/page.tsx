@@ -1,4 +1,5 @@
 import React from 'react';
+import type { Metadata } from 'next';
 import {
   Briefcase,
   Shield,
@@ -13,6 +14,7 @@ import {
 } from 'lucide-react';
 import { DataCard, DataRow, StatusBadge, ScoreBadge, TagList } from '@/components/domain/data-card';
 import { getSiteReport } from '@/lib/api-client/client';
+import { buildDataSubPageMetadata } from '@/lib/seo/metadata';
 
 export const runtime = 'edge';
 
@@ -21,6 +23,11 @@ type BusinessPageProps = {
     domain: string;
   }>;
 };
+
+export async function generateMetadata({ params }: BusinessPageProps): Promise<Metadata> {
+  const { domain } = await params;
+  return buildDataSubPageMetadata(domain, 'business');
+}
 
 function formatSignal(signal: string): string {
   return signal

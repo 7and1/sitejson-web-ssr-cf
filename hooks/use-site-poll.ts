@@ -1,32 +1,33 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { ApiResponse, SiteData } from '../lib/types';
-import { fetchSiteData } from '../services/mockApi';
+import type { SiteReport } from '../lib/api-client/types';
+import { fetchSiteData } from '../services/api';
 
 interface UseSiteDataResult {
-  data: SiteData | null;
-  isLoading: boolean;     // Initial fetch
-  isProcessing: boolean;  // Polling active
-  progress: number;       // Fake progress 0-100
+  data: SiteReport | null;
+  isStale: boolean;
+  isLoading: boolean;
+  isProcessing: boolean;
+  progress: number;
   error: string | null;
   refresh: () => void;
   statusMessage: string;
 }
 
 export function useSiteData(domain: string): UseSiteDataResult {
-  const [data, setData] = useState<SiteData | null>(null);
+  const [data, setData] = useState<SiteReport | null>(null);
+  const [isStale, setIsStale] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [progress, setProgress] = useState(0);
   const [statusMessage, setStatusMessage] = useState("Initializing...");
-  
-  // To prevent race conditions and cleanup
+
   const stopPollingRef = useRef(false);
 
   const poll = useCallback(async () => {
     try {
       const response = await fetchSiteData(domain);
-      
+
       if (stopPollingRef.current) return;
 
       if (response.status === 'error') {
@@ -38,6 +39,7 @@ export function useSiteData(domain: string): UseSiteDataResult {
 
       if (response.status === 'completed' && response.data) {
         setData(response.data);
+        setIsStale(Boolean(response.is_stale));
         setProgress(100);
         setStatusMessage('Analysis complete');
         setIsLoading(false);
@@ -53,28 +55,26 @@ export function useSiteData(domain: string): UseSiteDataResult {
         }
 
         setStatusMessage(response.message || response.stage || 'Analyzing...');
-        
-        // Schedule next poll in 2 seconds
+
         setTimeout(() => {
             if (!stopPollingRef.current) poll();
         }, 2000);
       }
-    } catch (err) {
+    } catch {
       setError('Failed to fetch data');
       setIsLoading(false);
       setIsProcessing(false);
     }
   }, [domain]);
 
-  // Initial Fetch
   useEffect(() => {
     if (!domain) return;
-    
+
     setIsLoading(true);
     setError(null);
     setProgress(0);
     stopPollingRef.current = false;
-    
+
     poll();
 
     return () => {
@@ -82,19 +82,16 @@ export function useSiteData(domain: string): UseSiteDataResult {
     };
   }, [domain, poll]);
 
-  // Fake Progress Bar Animation during processing
   useEffect(() => {
     let interval: ReturnType<typeof setInterval>;
     if (isProcessing && progress < 90) {
       interval = setInterval(() => {
         setProgress(prev => {
-          // Slow down as we get closer to 90%
           const increment = prev > 60 ? 2 : 8;
           return Math.min(prev + increment, 90);
         });
-        
-        // Cycle messages
-      const messages = ["Queued...", "Fetching DNS...", "Running Providers...", "Building Report..."];
+
+        const messages = ["Queued...", "Fetching DNS...", "Running Providers...", "Building Report..."];
         setStatusMessage(prev => {
             const idx = messages.indexOf(prev);
             if (idx === -1) return messages[0];
@@ -109,9 +106,9 @@ export function useSiteData(domain: string): UseSiteDataResult {
   const refresh = useCallback(() => {
     setIsLoading(true);
     setData(null);
+    setIsStale(false);
     setProgress(0);
     stopPollingRef.current = false;
-    // Force refresh param
     fetchSiteData(domain, true).then((res) => {
         if (res.status === 'processing') {
             setIsLoading(false);
@@ -121,12 +118,21 @@ export function useSiteData(domain: string): UseSiteDataResult {
             }
             setStatusMessage(res.message || res.stage || 'Analysis queued');
             setTimeout(poll, 2000);
+        } else if (res.status === 'error') {
+            setError(res.message || 'Refresh failed');
+            setIsLoading(false);
+            setIsProcessing(false);
         } else if (res.data) {
             setData(res.data);
+            setIsStale(Boolean(res.is_stale));
             setIsLoading(false);
         }
+    }).catch(() => {
+        setError('Network error during refresh');
+        setIsLoading(false);
+        setIsProcessing(false);
     });
   }, [domain, poll]);
 
-  return { data, isLoading, isProcessing, progress, error, refresh, statusMessage };
+  return { data, isStale, isLoading, isProcessing, progress, error, refresh, statusMessage };
 }

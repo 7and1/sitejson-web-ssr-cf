@@ -18,6 +18,6 @@ Next.js App Router project for Cloudflare Pages/Workers SSR deployment.
 ## Architecture
 
 - UI is migrated from `sitejson-web-cf` as the primary design reference.
-- Browser calls `services/mockApi.ts` (legacy filename) which now uses real APIs.
+- Browser calls `services/api.ts` which proxies to real backend APIs via BFF routes.
 - Next route handlers under `app/api/sitejson/*` proxy requests to backend and keep auth headers server-side.
 - Route metadata and canonical tags are generated per page.

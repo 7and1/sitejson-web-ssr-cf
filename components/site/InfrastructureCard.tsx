@@ -1,14 +1,16 @@
 import React from 'react';
-import { SiteData } from '../../lib/types';
+import type { SiteReport } from '../../lib/api-client/types';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/Card';
-import { Server, Mail, Cpu, Zap } from 'lucide-react';
+import { Server, Mail, Cpu, Zap, CheckCircle2, XCircle } from 'lucide-react';
 import { Badge } from '../ui/Badge';
 import Link from 'next/link';
 
-export const InfrastructureCard: React.FC<{ data: SiteData }> = ({ data }) => {
-  const { dns, meta } = data;
+export const InfrastructureCard: React.FC<{ data: SiteReport }> = ({ data }) => {
+  const dns = data.dns;
+  const techStack = data.meta?.techStackDetected ?? [];
+  const health = data.providerHealth;
 
-  if (!dns) return null;
+  if (!dns && techStack.length === 0) return null;
 
   return (
     <Card className="border border-slate-200 shadow-sm h-full flex flex-col">
@@ -18,46 +20,68 @@ export const InfrastructureCard: React.FC<{ data: SiteData }> = ({ data }) => {
           Infrastructure
         </CardTitle>
       </CardHeader>
-      <CardContent className="p-5 flex flex-col gap-6">
-        
+      <CardContent className="p-5 flex flex-col gap-4">
+
         {/* DNS / Email */}
-        <div className="space-y-4">
-          <div>
-            <div className="text-[10px] font-bold uppercase text-slate-400 mb-1.5 flex items-center gap-1">
-              <Zap size={10} /> DNS Provider
-            </div>
-            <div className="flex items-center gap-2">
-              <Badge variant="secondary" className="bg-slate-100 text-slate-700 font-mono">
-                {dns.provider}
-              </Badge>
-            </div>
-          </div>
-
-          <div>
-            <div className="text-[10px] font-bold uppercase text-slate-400 mb-1.5 flex items-center gap-1">
-              <Mail size={10} /> Mail Exchange
-            </div>
-            <div className="text-xs font-mono text-slate-600 truncate bg-slate-50 p-1.5 rounded border border-slate-100">
-              {dns.mx_records[0] || 'No MX records found'}
-            </div>
-          </div>
-        </div>
-
-        {/* Detected Tech */}
-        <div className="mt-auto pt-4 border-t border-slate-50">
-          <div className="text-[10px] font-bold uppercase text-slate-400 mb-2 flex items-center gap-1">
-            <Cpu size={10} /> Detected Stack
-          </div>
-          <div className="flex flex-wrap gap-1.5">
-            {meta.tech_stack_detected.map((tech) => (
-              <Link key={tech} href={`/directory/technology/${tech.toLowerCase()}`}>
-                <Badge variant="outline" className="text-[10px] px-1.5 py-0 hover:border-slate-400 cursor-pointer bg-white">
-                  {tech}
+        {dns && (
+          <div className="space-y-3">
+            {dns.provider && (
+              <div>
+                <div className="text-[10px] font-bold uppercase text-slate-400 mb-1.5 flex items-center gap-1">
+                  <Zap size={10} /> DNS Provider
+                </div>
+                <Badge variant="secondary" className="bg-slate-100 text-slate-700 font-mono">
+                  {dns.provider}
                 </Badge>
-              </Link>
+              </div>
+            )}
+
+            {dns.mxRecords && dns.mxRecords.length > 0 && (
+              <div>
+                <div className="text-[10px] font-bold uppercase text-slate-400 mb-1.5 flex items-center gap-1">
+                  <Mail size={10} /> Mail Exchange
+                </div>
+                <div className="text-xs font-mono text-slate-600 truncate bg-slate-50 p-1.5 rounded border border-slate-100">
+                  {dns.mxRecords[0]}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Provider Health */}
+        {health && health.length > 0 && (
+          <div className="grid grid-cols-2 gap-1.5">
+            {health.slice(0, 6).map((p) => (
+              <div key={p.provider} className="flex items-center gap-1.5 text-[10px]">
+                {p.ok ? (
+                  <CheckCircle2 size={10} className="text-emerald-500 shrink-0" />
+                ) : (
+                  <XCircle size={10} className="text-rose-400 shrink-0" />
+                )}
+                <span className="text-slate-600 truncate capitalize">{p.provider}</span>
+              </div>
             ))}
           </div>
-        </div>
+        )}
+
+        {/* Detected Tech */}
+        {techStack.length > 0 && (
+          <div className="mt-auto pt-3 border-t border-slate-50">
+            <div className="text-[10px] font-bold uppercase text-slate-400 mb-2 flex items-center gap-1">
+              <Cpu size={10} /> Detected Stack
+            </div>
+            <div className="flex flex-wrap gap-1.5">
+              {techStack.map((tech) => (
+                <Link key={tech} href={`/directory/technology/${tech.toLowerCase()}`}>
+                  <Badge variant="outline" className="text-[10px] px-1.5 py-0 hover:border-slate-400 cursor-pointer bg-white">
+                    {tech}
+                  </Badge>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
 
       </CardContent>
     </Card>

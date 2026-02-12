@@ -1,27 +1,37 @@
-"use client";
+'use client';
 
 import React, { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
-import { fetchDirectoryListing } from '../services/api';
-import type { DirectoryItem } from '../lib/api-client/types';
-import { SiteCard } from '../components/shared/SiteCard';
-import { Button } from '../components/ui/Button';
+import { fetchDirectoryListing } from '@/services/api';
+import type { DirectoryItem } from '@/lib/api-client/types';
+import { SiteCard } from '@/components/shared/SiteCard';
+import { Button } from '@/components/ui/Button';
 import { ChevronRight, Hash, Layers, Tag } from 'lucide-react';
 
 type PageType = 'category' | 'technology' | 'topic';
 
-interface DirectoryProps {
+interface DirectoryContentProps {
   mode: PageType;
   value: string;
+  initialItems: DirectoryItem[];
+  initialTotal: number;
+  initialTotalPages: number;
+  pageSize: number;
 }
 
-const Directory: React.FC<DirectoryProps> = ({ mode, value }) => {
-  const [sites, setSites] = useState<DirectoryItem[]>([]);
-  const [total, setTotal] = useState(0);
+export default function DirectoryContent({
+  mode,
+  value,
+  initialItems,
+  initialTotal,
+  initialTotalPages,
+  pageSize,
+}: DirectoryContentProps) {
+  const [sites, setSites] = useState<DirectoryItem[]>(initialItems);
+  const [total, setTotal] = useState(initialTotal);
   const [page, setPage] = useState(1);
-  const [pageSize] = useState(24);
-  const [totalPages, setTotalPages] = useState(0);
-  const [loading, setLoading] = useState(true);
+  const [totalPages, setTotalPages] = useState(initialTotalPages);
+  const [loading, setLoading] = useState(false);
 
   const type: PageType = mode;
   let icon = <Layers className="w-6 h-6 text-blue-500" />;
@@ -37,22 +47,18 @@ const Directory: React.FC<DirectoryProps> = ({ mode, value }) => {
   const canGoNext = useMemo(() => totalPages > 0 && page < totalPages, [page, totalPages]);
 
   useEffect(() => {
+    if (page === 1) return;
     setLoading(true);
     fetchDirectoryListing(type, value, page, pageSize)
       .then((data) => {
         setSites(data.items);
         setTotal(data.total);
-        setPage(data.page);
         setTotalPages(data.totalPages);
       })
       .finally(() => {
         setLoading(false);
       });
   }, [type, value, page, pageSize]);
-
-  useEffect(() => {
-    setPage(1);
-  }, [type, value]);
 
   const handlePrev = () => {
     if (!canGoPrev || loading) return;
@@ -68,13 +74,13 @@ const Directory: React.FC<DirectoryProps> = ({ mode, value }) => {
     <div className="min-h-screen bg-slate-50/50">
       <div className="bg-white border-b border-slate-200">
         <div className="container mx-auto px-4 py-12 max-w-7xl">
-          <div className="flex items-center gap-2 text-sm text-slate-500 mb-6">
+          <nav className="flex items-center gap-2 text-sm text-slate-500 mb-6">
             <Link href="/" className="hover:text-slate-900">Home</Link>
             <ChevronRight size={14} />
             <span className="capitalize">{type}</span>
             <ChevronRight size={14} />
             <span className="text-slate-900 font-medium">{displayValue}</span>
-          </div>
+          </nav>
 
           <div className="flex items-start gap-4">
             <div className="p-3 bg-slate-100 rounded-xl border border-slate-200">{icon}</div>
@@ -136,6 +142,4 @@ const Directory: React.FC<DirectoryProps> = ({ mode, value }) => {
       </div>
     </div>
   );
-};
-
-export default Directory;
+}

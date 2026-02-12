@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import SiteReport from '@/screens/SiteReport';
-import { buildReportMetadata } from '@/lib/seo/metadata';
+import { buildSitePageMetadata } from '@/lib/seo/metadata';
 
 export const runtime = 'edge';
 
@@ -12,7 +12,7 @@ type SitePageProps = {
 
 export async function generateMetadata({ params }: SitePageProps): Promise<Metadata> {
   const { domain } = await params;
-  return buildReportMetadata(domain);
+  return buildSitePageMetadata(domain);
 }
 
 export default async function SitePage({ params }: SitePageProps) {

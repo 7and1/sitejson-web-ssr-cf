@@ -1,4 +1,5 @@
 import React from 'react';
+import type { Metadata } from 'next';
 import {
   Search,
   FileText,
@@ -17,6 +18,7 @@ import {
 import { DataCard, DataRow, StatusBadge, ScoreBadge, TagList } from '@/components/domain/data-card';
 import { getSiteReport } from '@/lib/api-client/client';
 import { cn } from '@/lib/utils';
+import { buildDataSubPageMetadata } from '@/lib/seo/metadata';
 
 export const runtime = 'edge';
 
@@ -25,6 +27,11 @@ type SeoPageProps = {
     domain: string;
   }>;
 };
+
+export async function generateMetadata({ params }: SeoPageProps): Promise<Metadata> {
+  const { domain } = await params;
+  return buildDataSubPageMetadata(domain, 'seo');
+}
 
 interface ChecklistItemProps {
   label: string;

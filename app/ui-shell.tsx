@@ -26,31 +26,27 @@ export const UiShell = ({ children }: UiShellProps) => {
             <div>
               <h4 className="font-bold text-slate-900 mb-4">Product</h4>
               <ul className="space-y-2 text-sm text-slate-500">
-                <li><a href="#" className="hover:text-slate-900">API</a></li>
-                <li><a href="#" className="hover:text-slate-900">Pricing</a></li>
-                <li><a href="#" className="hover:text-slate-900">Documentation</a></li>
+                <li><a href="https://api.sitejson.com/api/docs" target="_blank" rel="noreferrer" className="hover:text-slate-900">API Docs</a></li>
+                <li><a href="https://api.sitejson.com/api/openapi.json" target="_blank" rel="noreferrer" className="hover:text-slate-900">OpenAPI Spec</a></li>
               </ul>
             </div>
             <div>
               <h4 className="font-bold text-slate-900 mb-4">Resources</h4>
               <ul className="space-y-2 text-sm text-slate-500">
-                <li><a href="#" className="hover:text-slate-900">Blog</a></li>
-                <li><a href="#" className="hover:text-slate-900">Directory</a></li>
-                <li><a href="#" className="hover:text-slate-900">Tech Stack Index</a></li>
+                <li><a href="/directory/category/technology" className="hover:text-slate-900">Directory</a></li>
+                <li><a href="/directory/technology/react" className="hover:text-slate-900">Tech Stack Index</a></li>
               </ul>
             </div>
             <div>
               <h4 className="font-bold text-slate-900 mb-4">Company</h4>
               <ul className="space-y-2 text-sm text-slate-500">
-                <li><a href="#" className="hover:text-slate-900">About</a></li>
-                <li><a href="#" className="hover:text-slate-900">Contact</a></li>
-                <li><a href="#" className="hover:text-slate-900">Terms</a></li>
+                <li><a href="https://api.sitejson.com/api/v1/readyz" target="_blank" rel="noreferrer" className="hover:text-slate-900">System Status</a></li>
               </ul>
             </div>
           </div>
           <div className="pt-8 border-t border-slate-200 flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-xs text-slate-500 text-center md:text-left">
-              &copy; 2024 SiteJson Inc. All rights reserved.
+              &copy; {new Date().getFullYear()} SiteJSON. All rights reserved.
             </p>
           </div>
         </div>

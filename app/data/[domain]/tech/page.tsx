@@ -1,4 +1,5 @@
 import React from 'react';
+import type { Metadata } from 'next';
 import {
   Server,
   Globe,
@@ -14,6 +15,7 @@ import {
 import { DataCard, DataRow, TagList } from '@/components/domain/data-card';
 import { getSiteReport } from '@/lib/api-client/client';
 import { cn } from '@/lib/utils';
+import { buildDataSubPageMetadata } from '@/lib/seo/metadata';
 
 export const runtime = 'edge';
 
@@ -22,6 +24,11 @@ type TechPageProps = {
     domain: string;
   }>;
 };
+
+export async function generateMetadata({ params }: TechPageProps): Promise<Metadata> {
+  const { domain } = await params;
+  return buildDataSubPageMetadata(domain, 'tech');
+}
 
 export default async function TechPage({ params }: TechPageProps) {
   const { domain } = await params;
